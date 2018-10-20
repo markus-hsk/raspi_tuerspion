@@ -71,17 +71,6 @@ def doCheck():
             message = time.strftime('%Y-%m-%d %H:%M:%S') + ' Screen off in %s seconds   '
             print(message % (remain), end="\r")
             TIMER_STARTED = 1
-            
-def drawProgressBar(percent, barLen = 20):
-    sys.stdout.write("\r")
-    progress = ""
-    for i in range(barLen):
-        if i < int(barLen * percent):
-            progress += "="
-        else:
-            progress += " "
-    sys.stdout.write("[ %s ] %.2f%%" % (progress, percent * 100))
-    sys.stdout.flush()
 
 os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
 try:
