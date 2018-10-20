@@ -47,7 +47,7 @@ def distance(sample_size=5, sample_wait=0.01):
 
 def doCheck():
     global LAST_MOVE, SCREEN_STATE, TIMER_STARTED
-    d = distance(1, 0.001)
+    d = distance()
     now = time.time()
     last_move_diff = now - LAST_MOVE
     #print('Distance:', round(d),'cm | Screen:',SCREEN_STATE,
@@ -55,15 +55,19 @@ def doCheck():
     if d <= THRESHOLD:
         os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
         if SCREEN_STATE == 0 and TIMER_STARTED == 0:
-            print(time.strftime('%Y-%m-%d %H:%M:%S') + ' Screen on                       ')
+            print(time.strftime('%Y-%m-%d %H:%M:%S'),
+                  'Screen on                       ')
         else:
-            print('                                                                      ', end="\r")
+            print(time.strftime('%Y-%m-%d %H:%M:%S'),
+                  "Object in" , round(d, 2),
+                  'cm detected          ', end="\r")
         SCREEN_STATE = 1
         LAST_MOVE = now
     else:
         if last_move_diff >= TIMEOUT and SCREEN_STATE == 1:
             os.system("echo 1 > /sys/class/backlight/rpi_backlight/bl_power") # off
-            print(time.strftime('%Y-%m-%d %H:%M:%S') + ' Screen off                     ')
+            print(time.strftime('%Y-%m-%d %H:%M:%S'),
+                  'Screen off                     ')
             SCREEN_STATE = 0
             TIMER_STARTED = 0
         elif last_move_diff < TIMEOUT and SCREEN_STATE == 1:
@@ -74,12 +78,12 @@ def doCheck():
 
 os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
 try:
-    print(time.strftime('%Y-%m-%d %H:%M:%S') + ' Start displaystandby.py')
+    print(time.strftime('%Y-%m-%d %H:%M:%S'), 'Start displaystandby.py')
     while True:
         doCheck()
-        time.sleep(0.5)
+        time.sleep(1)
 except KeyboardInterrupt:
-    print(time.strftime('%Y-%m-%d %H:%M:%S') + ' End displaystandby.py')
+    print(time.strftime('%Y-%m-%d %H:%M:%S'), 'End displaystandby.py')
 
 GPIO.cleanup()
 os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
