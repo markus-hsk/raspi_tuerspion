@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import time, os, sys
+import time, os
 
 GPIO_TRIGGER = 18
 GPIO_ECHO = 24
