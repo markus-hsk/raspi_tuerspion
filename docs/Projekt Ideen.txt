@@ -1,0 +1,12 @@
+Raspberry Pi Türspion
+==============================================
+
+1. Videostream
+2. Synology Bewebungserkennung
+3. Monitor Bildbetrachter
+4. Monitor nur an bei Bewegungserkennung
+
+Weitere Ideen
+- Hinweiston wenn Bewegung erkannt (Piepen zB)
+- Ultraschallnäherungssensor nutzen und Bildschirm automatisch aktivieren wenn man sich nähert um zB den Wetterbericht abzurufen
+- Briefkastenüberwachen und mit blinkender LED auf Post hinweisen
