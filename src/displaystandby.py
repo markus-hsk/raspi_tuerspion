@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import time, os
+import time, os, statistics
 
 GPIO_TRIGGER = 18
 GPIO_ECHO = 24
@@ -30,38 +30,32 @@ def distance(sample_size=5, sample_wait=0.01):
         time.sleep(0.00001)
         GPIO.output(GPIO_TRIGGER, False)
         echo_status_counter = 1
-        sonar_signal_on, sonar_signal_off = time.time(), time.time()
-        while GPIO.input(GPIO_ECHO) == 0:
-            if echo_status_counter < 1000:
-                sonar_signal_off = time.time()
-                echo_status_counter += 1
-            #else:
-            #    raise SystemError('Echo pulse was not received')
+        sonar_signal_on, sonar_signal_off = time.time()+1, time.time()
+        while GPIO.input(GPIO_ECHO) == 0 and echo_status_counter < 1000:
+            sonar_signal_off = time.time()
+            echo_status_counter += 1
         while GPIO.input(GPIO_ECHO) == 1:
             sonar_signal_on = time.time()
         time_passed = sonar_signal_on - sonar_signal_off
         distance_cm = time_passed * ((speed_of_sound * 100) / 2)
         sample.append(distance_cm)
-    sorted_sample = sorted(sample)
-    return sorted_sample[sample_size // 2]
+    return statistics.median(sample)
 
 def doCheck():
     global LAST_MOVE, SCREEN_STATE, TIMER_STARTED
     d = distance()
     now = time.time()
     last_move_diff = now - LAST_MOVE
-    #print('Distance:', round(d),'cm | Screen:',SCREEN_STATE,
-    #      '| Last movement:',round(last_move_diff))
     if d <= THRESHOLD:
-        os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
         if SCREEN_STATE == 0 and TIMER_STARTED == 0:
+            os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
             print(time.strftime('%Y-%m-%d %H:%M:%S'),
                   'Screen on                       ')
-        else:
-            print(time.strftime('%Y-%m-%d %H:%M:%S'),
-                  "Object in" , round(d, 2),
-                  'cm detected          ', end="\r")
+        print(time.strftime('%Y-%m-%d %H:%M:%S'), 
+              "Object in" , round(d, 2),
+              'cm detected          ', end="\r")
         SCREEN_STATE = 1
+        TIMER_STARTED = 1
         LAST_MOVE = now
     else:
         if last_move_diff >= TIMEOUT and SCREEN_STATE == 1:
@@ -74,7 +68,6 @@ def doCheck():
             remain = round(TIMEOUT - last_move_diff)
             message = time.strftime('%Y-%m-%d %H:%M:%S') + ' Screen off in %s seconds   '
             print(message % (remain), end="\r")
-            TIMER_STARTED = 1
 
 os.system("echo 0 > /sys/class/backlight/rpi_backlight/bl_power") # on
 try:
