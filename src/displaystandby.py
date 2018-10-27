@@ -19,6 +19,7 @@ SCREEN_STATE = 1
 
 TIMER_STARTED = 0
 
+if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
     TIMER = sys.argv[1];
 else:
     TIMER = 1;
