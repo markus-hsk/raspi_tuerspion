@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import time, os, statistics
+import time, os, statistics, sys
 
 GPIO_TRIGGER = 18
 GPIO_ECHO = 24
@@ -18,6 +18,10 @@ LAST_MOVE = time.time()
 SCREEN_STATE = 1
 
 TIMER_STARTED = 0
+
+    TIMER = sys.argv[1];
+else:
+    TIMER = 1;
 
 def distance(sample_size=5, sample_wait=0.01):
     # https://raw.githubusercontent.com/alaudet/hcsr04sensor/master/hcsr04sensor/sensor.py
@@ -74,7 +78,7 @@ try:
     print(time.strftime('%Y-%m-%d %H:%M:%S'), 'Start displaystandby.py')
     while True:
         doCheck()
-        time.sleep(1)
+        time.sleep(TIMER)
 except KeyboardInterrupt:
     print(time.strftime('%Y-%m-%d %H:%M:%S'), 'End displaystandby.py')
 
