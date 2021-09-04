@@ -1,0 +1,49 @@
+<html>
+<head>
+	<title>Tuerspion</title>
+	<style>
+		body {
+		   margin: 0;
+		   padding: 0;
+		}
+	
+		img {
+			height: 100%;
+			width: 100%;
+			object-fit: contain;
+			color: red;
+			font-size:1em;
+		}
+	</style>
+</head>
+<body bgcolor="black">
+	<img id="cam" src="http://192.168.1.111:8081/" alt="Kamerabild nicht verfügbar"/>
+	<script>
+		var img = document.querySelector('img');
+		var src = img.src;
+		
+		var timeout = null;
+		function loaded()
+		{
+			clearTimeout(timeout);
+			timeout = window.setTimeout(reload, 3000);
+		}
+
+		if (img.complete)
+		{
+			loaded();
+		}
+		else
+		{
+			img.addEventListener('load', loaded);
+			img.addEventListener('error', loaded);
+		}
+		
+		function reload()
+		{
+			img.src = src + '?v=' + (new Date()).getTime();
+			console.log('RELOAD', img.src);
+		}
+	</script>
+</body>
+</html>
